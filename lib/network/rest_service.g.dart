@@ -21,15 +21,15 @@ class _RestService implements RestService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<AssetListResponse>> getAssetList(dto) async {
+  Future<HttpResponse<AssetAddResponse>> addAsset(dto) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(dto.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<AssetListResponse>>(Options(
-      method: 'GET',
+        _setStreamType<HttpResponse<AssetAddResponse>>(Options(
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
@@ -40,7 +40,7 @@ class _RestService implements RestService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = AssetListResponse.fromJson(_result.data!);
+    final value = AssetAddResponse.fromJson(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

@@ -1,14 +1,11 @@
+import 'package:mars_app/inheritance/asset_feature_mixin.dart';
 import 'package:mars_app/inheritance/list_mixin.dart';
-import 'package:mars_app/models/company_response.dart';
-import 'package:mars_app/models/category_response.dart';
 import 'package:mars_app/models/dto/get_list_dto.dart';
 import 'package:mars_app/models/asset_list_response.dart';
-import 'package:mars_app/models/location_response.dart';
-import 'package:mars_app/models/dto/get_locations_dto.dart';
 import 'package:mars_app/network/rest_service.dart';
 import 'package:mars_app/utils/resource.dart';
 
-class ListRepository with ListMixin {
+class ListRepository with ListMixin, AssetFeatureMixin {
   final RestService _service;
   ListRepository({
     required RestService service,
@@ -32,33 +29,33 @@ class ListRepository with ListMixin {
     }
   }
 
-  @override
-  Future<Resource<LocationResponse>> getLocations(GetLocationsDto dto) async {
-    try {
-      final response = await _service.getLocations(dto);
-      return Resource.success(response.data);
-    } catch (e) {
-      return Resource.error(e.toString());
-    }
-  }
+  // @override
+  // Future<Resource<LocationResponse>> getLocations(GetLocationsDto dto) async {
+  //   try {
+  //     final response = await _service.getLocations(dto);
+  //     return Resource.success(response.data);
+  //   } catch (e) {
+  //     return Resource.error(e.toString());
+  //   }
+  // }
 
-  @override
-  Future<Resource<CategoryResponse>> getCategories() async {
-    try {
-      final response = await _service.getCategories();
-      return Resource.success(response.data);
-    } catch (e) {
-      return Resource.error(e.toString());
-    }
-  }
+  // @override
+  // Future<Resource<CategoryResponse>> getCategories() async {
+  //   try {
+  //     final response = await _service.getCategories();
+  //     return Resource.success(response.data);
+  //   } catch (e) {
+  //     return Resource.error(e.toString());
+  //   }
+  // }
 
-  @override
-  Future<Resource<CompanyResponse>> getCompanies() async {
-    try {
-      final response = await _service.getCompanies();
-      return Resource.success(response.data);
-    } catch (e) {
-      return Resource.error(e.toString());
-    }
-  }
+  // @override
+  // Future<Resource<CompanyResponse>> getCompanies() async {
+  //   try {
+  //     final response = await _service.getCompanies();
+  //     return Resource.success(response.data);
+  //   } catch (e) {
+  //     return Resource.error(e.toString());
+  //   }
+  // }
 }

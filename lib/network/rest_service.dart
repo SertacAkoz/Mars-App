@@ -1,10 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:dio/dio.dart';
+import 'package:mars_app/models/asset_add_response.dart';
 import 'package:mars_app/models/asset_list_response.dart';
 import 'package:mars_app/models/category_response.dart';
 import 'package:mars_app/models/company_response.dart';
-import 'package:mars_app/models/dto/get_list_dto.dart';
+import 'package:mars_app/models/dto/asset_add_dto.dart';
 import 'package:mars_app/models/dto/get_locations_dto.dart';
 import 'package:mars_app/models/location_response.dart';
 import 'package:mars_app/utils/constants.dart';
@@ -17,8 +18,11 @@ part 'rest_service.g.dart';
 abstract class RestService {
   factory RestService(Dio dio, {String baseUrl}) = _RestService;
 
-  @GET('/hardware')
-  Future<HttpResponse<AssetListResponse>> getAssetList(@Body() GetListDto dto);
+  // @GET('/hardware')
+  // Future<HttpResponse<AssetListResponse>> getAssetList(@Body() GetListDto dto);
+
+  @POST('/hardware')
+  Future<HttpResponse<AssetAddResponse>> addAsset(@Body() AssetAddDto dto);
 
   @GET('/hardware')
   Future<HttpResponse<AssetListResponse>> getAssetListQuery(@Query('limit') String limit, @Query('offset') String offset, @Query('sort') String sort, @Query('order') String order, @Query('location_id') String? locationId, @Query('category_id') String? categoryId, @Query('company_id') String? companyId,);

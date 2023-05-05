@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mars_app/inheritance/mars_style.dart';
+import 'package:mars_app/utils/utils.dart';
 
 class AppDrawer extends StatefulWidget {
   final Widget child;
@@ -153,18 +154,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                width: 150,
-                height: 150,
-                padding: const EdgeInsets.only(left: 10),
-                alignment: Alignment.centerLeft,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(0.0),
-                  child: Image.asset('assets/images/mars.jpeg'),
+              const SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+                  // padding: const EdgeInsets.only(left: 25),
+                  alignment: Alignment.centerLeft,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.asset('assets/images/mars.jpeg'),
+                  ),
                 ),
               ),
+              const SizedBox(height: 25),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Utils.navigate(navigationPath: '/assetList', context: context);
+                },
                 child: const ListTile(
                   leading: Icon(Icons.list_alt_rounded),
                   title: Text('Assets'),
@@ -181,7 +195,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Utils.navigate(navigationPath: '/assetAdd', context: context);
+                },
                 child: const ListTile(
                   leading: Icon(Icons.add_rounded),
                   title: Text('Add Asset'),

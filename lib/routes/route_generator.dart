@@ -31,7 +31,7 @@ class RouteGenerator {
       case '/assetDetail':
         return _routeOlustur(AssetDetailView(style: getIt.get<AssetDetailStyle>(), asset: settings.arguments as Asset), settings);
       case '/assetAdd':
-        return _routeOlustur(AssetAddView(style: getIt.get<AssetAddStyle>(), viewModel: AssetAddCubit(repo: getIt.get<AssetAddRepository>())), settings);
+        return _routeOlustur(AppDrawer(style: getIt.get<AssetAddStyle>(), child: AssetAddView(style: getIt.get<AssetAddStyle>(), viewModel: AssetAddCubit(repo: getIt.get<AssetAddRepository>()))), settings);
       default:
         return _routeOlustur(NotFoundView(style: getIt.get<NotFoundStyle>()), settings);
     }

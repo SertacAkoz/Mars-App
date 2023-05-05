@@ -23,9 +23,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        debugPrint('Main Dart Clicked');
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData().copyWith(
+          colorScheme: ThemeData()
+              .colorScheme
+              .copyWith(primary: const Color(0xFF432BFF)),
+        ),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: RouteGenerator.routeGenerator,
         title: 'Mars App',

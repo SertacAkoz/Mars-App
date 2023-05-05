@@ -8,7 +8,4 @@ import 'package:mars_app/utils/resource.dart';
 
 mixin ListMixin{
   Future<Resource<AssetListResponse>> getAssetList(GetListDto dto);
-  Future<Resource<LocationResponse>> getLocations(GetLocationsDto dto);
-  Future<Resource<CategoryResponse>> getCategories();
-  Future<Resource<CompanyResponse>> getCompanies();
 }

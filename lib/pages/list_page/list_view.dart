@@ -105,8 +105,7 @@ class AssetListView extends StatelessWidget {
               children: [
                 const Text('Location'),
                 Text(
-                  _viewModel.getCityNameFromLabel(
-                      state.selectValueLocation?.label ?? '...'),
+                  Utils.getCityNameFromLabel(state.selectValueLocation?.label ?? '...'),
                 ),
               ],
             ),
@@ -130,14 +129,19 @@ class AssetListView extends StatelessWidget {
           ),
         ),
         SizedBox(height: _style.filterWhitespaceHeight()),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('Category'),
-              Text('...'),
-            ],
+        InkWell(
+          onTap: () {
+            _viewModel.showCategorySelectBox();
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Category'),
+                Text(state.selectValueCategory?.label ?? '...'),
+              ],
+            ),
           ),
         ),
         SizedBox(height: _style.filterWhitespaceHeight()),

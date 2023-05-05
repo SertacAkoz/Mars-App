@@ -106,6 +106,7 @@ class ListCubit extends Cubit<ListState> {
           companies: responseCompanies,
           selectValueLocation: selectValueLocation,
           selectValueCompany: selectValueCompany,
+          selectValueCategory: selectValueCategory,
         ),
       );
     }
@@ -136,7 +137,40 @@ class ListCubit extends Cubit<ListState> {
             locations: responseLocations,
             companies: responseCompanies,
             selectValueLocation: selectValueLocation,
-            selectValueCompany: selectValueCompany),
+            selectValueCompany: selectValueCompany,
+            selectValueCategory: selectValueCategory,),
+      );
+    }
+  }
+
+  void showCategorySelectBox() async {
+    List<NativeSelectItem> selectList = [];
+    for (var index = 0; index < responseCategories.data!.rows!.length; index++) {
+      selectList.add(NativeSelectItem(
+          value: responseCategories.data!.rows![index].id.toString(),
+          label: '${responseCategories.data!.rows![index].name}'));
+    }
+    final selectedItem = await FlutterNativeSelect.openSelect(
+      doneText: 'Select',
+      items: selectList,
+    );
+
+    if (selectedItem != null) {
+      debugPrint('User selected: $selectedItem');
+      final result =
+          selectList.where((element) => element.value == selectedItem).toList();
+      debugPrint('Result : ${result[0].label}');
+      selectValueCategory = result[0];
+      emit(
+        ListSuccess(
+          assets: responseAssetList,
+          categories: responseCategories,
+          locations: responseLocations,
+          companies: responseCompanies,
+          selectValueLocation: selectValueLocation,
+          selectValueCompany: selectValueCompany,
+          selectValueCategory: selectValueCategory,
+        ),
       );
     }
   }
