@@ -60,6 +60,11 @@ class ListCubit extends Cubit<ListState> {
 
   Future<void> getAllDatas() async {
     emit(ListLoading());
+
+    selectValueLocation = null;
+    selectValueCategory = null;
+    selectValueCompany = null;
+
     await getLocations();
     await getCategories();
     await getCompanies();
@@ -75,23 +80,22 @@ class ListCubit extends Cubit<ListState> {
   }
 
   void showLocationSelectBox() async {
-    List<NativeSelectItem> locationSelectList = [];
+    List<NativeSelectItem> selectList = [];
     for (var index = 0; index < responseLocations.data!.rows!.length; index++) {
-      locationSelectList.add(NativeSelectItem(
+      selectList.add(NativeSelectItem(
           value: responseLocations.data!.rows![index].id.toString(),
           label:
               '${responseLocations.data!.rows![index].city} ${responseLocations.data!.rows![index].address} ${responseLocations.data!.rows![index].address2}'));
     }
     final selectedItem = await FlutterNativeSelect.openSelect(
       doneText: 'Select',
-      items: locationSelectList,
+      items: selectList,
     );
 
     if (selectedItem != null) {
       debugPrint('User selected: $selectedItem');
-      final result = locationSelectList
-          .where((element) => element.value == selectedItem)
-          .toList();
+      final result =
+          selectList.where((element) => element.value == selectedItem).toList();
       debugPrint('Result : ${result[0].label}');
       selectValueLocation = result[0];
       emit(
@@ -101,7 +105,38 @@ class ListCubit extends Cubit<ListState> {
           locations: responseLocations,
           companies: responseCompanies,
           selectValueLocation: selectValueLocation,
+          selectValueCompany: selectValueCompany,
         ),
+      );
+    }
+  }
+
+  void showCompanySelectBox() async {
+    List<NativeSelectItem> selectList = [];
+    for (var index = 0; index < responseCompanies.data!.rows!.length; index++) {
+      selectList.add(NativeSelectItem(
+          value: responseCompanies.data!.rows![index].id.toString(),
+          label: '${responseCompanies.data!.rows![index].name}'));
+    }
+    final selectedItem = await FlutterNativeSelect.openSelect(
+      doneText: 'Select',
+      items: selectList,
+    );
+
+    if (selectedItem != null) {
+      debugPrint('User selected: $selectedItem');
+      final result =
+          selectList.where((element) => element.value == selectedItem).toList();
+      debugPrint('Result : ${result[0].label}');
+      selectValueCompany = result[0];
+      emit(
+        ListSuccess(
+            assets: responseAssetList,
+            categories: responseCategories,
+            locations: responseLocations,
+            companies: responseCompanies,
+            selectValueLocation: selectValueLocation,
+            selectValueCompany: selectValueCompany),
       );
     }
   }
@@ -111,6 +146,8 @@ class ListCubit extends Cubit<ListState> {
     GetListDto dto = GetListDto(
       limit: '50',
       location_id: selectValueLocation?.value,
+      company_id: selectValueCompany?.value,
+      category_id: selectValueCategory?.value,
     );
     responseAssetList = await _repo.getAssetList(dto);
 

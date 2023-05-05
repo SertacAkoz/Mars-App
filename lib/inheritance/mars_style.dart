@@ -16,4 +16,8 @@ class MarsStyle{
   TextStyle headerTextStyle(){
     return TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: primaryColor());
   }
+
+  double whiteSpaceHeight(){
+    return 10;
+  }
 }

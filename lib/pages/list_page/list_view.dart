@@ -7,6 +7,7 @@ import 'package:mars_app/models/asset.dart';
 
 import 'package:mars_app/pages/list_page/list_cubit.dart';
 import 'package:mars_app/pages/list_page/list_style.dart';
+import 'package:mars_app/utils/utils.dart';
 import 'package:mars_app/widgets/custom_header.dart';
 import 'package:mars_app/widgets/loading_widget.dart';
 
@@ -32,15 +33,15 @@ class AssetListView extends StatelessWidget {
   Scaffold _buildScaffold() {
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async{ 
+        onRefresh: () async {
           _viewModel.getAllDatas();
-         },
+        },
         child: Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 63.0, 0.0, 0.0),
             child: Column(
               children: [
                 CustomHeaderWidget(
-                  title: 'Asset List',
+                  title: 'Assets',
                   textstyle: _style.headerTextStyle(),
                   backgroundColor: _style.primaryColor(),
                 ),
@@ -54,7 +55,7 @@ class AssetListView extends StatelessWidget {
                           // _viewModel.getLocations();
                           _viewModel.getAllDatas();
                         });
-      
+
                         return const LoadingWidget();
                       } else if (state is ListSuccess) {
                         return _buildSuccess(state, context);
@@ -112,14 +113,20 @@ class AssetListView extends StatelessWidget {
           ),
         ),
         SizedBox(height: _style.filterWhitespaceHeight()),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('Company'),
-              Text('...'),
-            ],
+        InkWell(
+          onTap: () {
+            _viewModel.showCompanySelectBox();
+          },
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Company'),
+                Text(state.selectValueCompany?.label ?? '...'),
+              ],
+            ),
           ),
         ),
         SizedBox(height: _style.filterWhitespaceHeight()),
@@ -163,21 +170,56 @@ class AssetListView extends StatelessWidget {
   }
 
   Widget _assetsGridView(ListSuccess state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 30,
-          mainAxisExtent: 300,
+    if (state.assets.data!.rows!.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Icon(Icons.warning_rounded, color: _style.primaryColor(), size: 45,)],
+            ),
+            SizedBox(height: _style.errorWhitespaceHeight()),
+            const Text(
+              'No products were found matching your search criteria. Please refresh the page to see all products.',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: _style.errorWhitespaceHeight()),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: _style.primaryColor()),
+              onPressed: () {
+                _viewModel.getAllDatas();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Refresh'),
+                  SizedBox(width: _style.errorWhitespaceHeight()),
+                  const Icon(Icons.refresh_rounded),
+                ],
+              ),
+            ),
+          ],
         ),
-        itemCount: state.assets.data?.rows?.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _assetGridViewRow(state.assets.data!.rows![index]);
-        },
-      ),
-    );
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 0,
+            mainAxisSpacing: 30,
+            mainAxisExtent: 300,
+          ),
+          itemCount: state.assets.data?.rows?.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _assetGridViewRow(state.assets.data!.rows![index], context);
+          },
+        ),
+      );
+    }
   }
 
   Widget expandedListTileItem(Text title) {
@@ -193,9 +235,11 @@ class AssetListView extends StatelessWidget {
     );
   }
 
-  InkWell _assetGridViewRow(Asset asset) {
+  InkWell _assetGridViewRow(Asset asset, BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Utils.navigate(navigationPath: '/assetDetail', context: context, argumenents: asset);
+      },
       child: Container(
         margin: const EdgeInsets.only(
           left: 8,
@@ -224,15 +268,18 @@ class AssetListView extends StatelessWidget {
             //     asset.image!,
             //   ),
             // ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(0.0),
-                child: CachedNetworkImage(
-                  imageUrl: asset.image!,
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+            Hero(
+              tag: asset.id!,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(0.0),
+                  child: CachedNetworkImage(
+                    imageUrl: asset.image!,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                  ),
                 ),
               ),
             ),

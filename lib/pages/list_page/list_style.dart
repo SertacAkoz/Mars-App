@@ -8,4 +8,8 @@ class ListStyle extends MarsStyle{
   double filterWhitespaceHeight(){
     return 20;
   }
+
+  double errorWhitespaceHeight(){
+    return 20;
+  }
 }

@@ -154,16 +154,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                  width: 150,
-                  height: 150,
-                  padding: const EdgeInsets.only(left: 10),
-                  alignment: Alignment.centerLeft,
-                  child: const Icon(Icons.storefront_rounded)),
+                width: 150,
+                height: 150,
+                padding: const EdgeInsets.only(left: 10),
+                alignment: Alignment.centerLeft,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(0.0),
+                  child: Image.asset('assets/images/mars.jpeg'),
+                ),
+              ),
               InkWell(
                 onTap: () {},
                 child: const ListTile(
                   leading: Icon(Icons.list_alt_rounded),
-                  title: Text('Asset List'),
+                  title: Text('Assets'),
                 ),
               ),
               const SizedBox(
@@ -174,6 +178,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     color: Color(0xfff4f4f8),
                     height: 0,
                   ),
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: const ListTile(
+                  leading: Icon(Icons.add_rounded),
+                  title: Text('Add Asset'),
                 ),
               ),
             ],
