@@ -27,7 +27,7 @@ class AssetAddCubit extends Cubit<AssetAddState> {
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final Random _rnd = Random();
 
-  int randomStringLenght = 40;
+  int randomStringLenght = 45;
 
   late Resource<LocationResponse> responseLocations;
   NativeSelectItem? selectValueLocation;

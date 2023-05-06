@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, non_constant_identifier_names
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mars_app/models/custom_fields.dart';
 
 import 'package:mars_app/models/default_model.dart';
 
@@ -27,6 +28,9 @@ class Asset {
   final String? image;
   @JsonKey(name:'purchase_cost')
   final String? purchaseCost;
+  final String? age;
+  @JsonKey(name:'custom_fields')
+  final CustomFields? customFields;
   
   Asset({
     this.id,
@@ -43,6 +47,8 @@ class Asset {
     this.location,
     this.image,
     this.purchaseCost,
+    this.age,
+    this.customFields,
   });
 
 

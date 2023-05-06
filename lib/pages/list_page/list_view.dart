@@ -59,8 +59,12 @@ class AssetListView extends StatelessWidget {
                         return const LoadingWidget();
                       } else if (state is ListSuccess) {
                         return _buildSuccess(state, context);
-                      } else {
+                      } else if(state is ListLoading){
                         return const LoadingWidget();
+                      }
+                      else {
+                        final result = state as ListError;
+                        return _buildError(result);
                       }
                     },
                   ),
@@ -105,7 +109,8 @@ class AssetListView extends StatelessWidget {
               children: [
                 const Text('Location'),
                 Text(
-                  Utils.getCityNameFromLabel(state.selectValueLocation?.label ?? '...'),
+                  Utils.getCityNameFromLabel(
+                      state.selectValueLocation?.label ?? '...'),
                 ),
               ],
             ),
@@ -134,12 +139,30 @@ class AssetListView extends StatelessWidget {
             _viewModel.showCategorySelectBox();
           },
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+            padding:
+                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Category'),
                 Text(state.selectValueCategory?.label ?? '...'),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: _style.filterWhitespaceHeight()),
+        InkWell(
+          onTap: () {
+            _viewModel.showModelsSelectBox();
+          },
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Models'),
+                Text(state.selectValueModels?.label ?? '...'),
               ],
             ),
           ),
@@ -182,7 +205,13 @@ class AssetListView extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Icon(Icons.warning_rounded, color: _style.primaryColor(), size: 45,)],
+              children: [
+                Icon(
+                  Icons.warning_rounded,
+                  color: _style.primaryColor(),
+                  size: 45,
+                )
+              ],
             ),
             SizedBox(height: _style.errorWhitespaceHeight()),
             const Text(
@@ -191,7 +220,8 @@ class AssetListView extends StatelessWidget {
             ),
             SizedBox(height: _style.errorWhitespaceHeight()),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: _style.primaryColor()),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: _style.primaryColor()),
               onPressed: () {
                 _viewModel.getAllDatas();
               },
@@ -242,7 +272,10 @@ class AssetListView extends StatelessWidget {
   InkWell _assetGridViewRow(Asset asset, BuildContext context) {
     return InkWell(
       onTap: () {
-        Utils.navigate(navigationPath: '/assetDetail', context: context, argumenents: asset);
+        Utils.navigate(
+            navigationPath: '/assetDetail',
+            context: context,
+            argumenents: asset);
       },
       child: Container(
         margin: const EdgeInsets.only(
@@ -266,12 +299,6 @@ class AssetListView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.all(20.0),
-            //   child: Image.network(
-            //     asset.image!,
-            //   ),
-            // ),
             Hero(
               tag: asset.id!,
               child: Padding(
@@ -279,74 +306,64 @@ class AssetListView extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(0.0),
                   child: CachedNetworkImage(
+                    height: 125,
                     imageUrl: asset.image!,
                     placeholder: (context, url) =>
                         const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
               ),
             ),
             const Divider(height: 0),
-            Text(asset.manufacturer?.name ?? 'No Data'),
-            Text(asset.category?.name ?? 'No Data'),
+            Text(
+              asset.manufacturer?.name ?? 'No Data',
+              style: _style.rowTitleTextTyle(),
+            ),
+            // Text(asset.category?.name ?? 'No Data'),
             Text(asset.model?.name ?? 'No Data'),
-            Text(asset.location?.name ?? 'No Data'),
-            Text(asset.purchaseCost ?? 'No Data'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.place_rounded,
+                  size: 15,
+                ),
+                SizedBox(width: _style.whiteSpaceHeight()),
+                Text(asset.location?.name ?? 'No Data'),
+              ],
+            ),
+            Text(
+              asset.purchaseCost ?? 'No Data',
+              style: _style.purchaseCostTextStyle(),
+            ),
             const SizedBox(height: 10),
           ],
         ),
       ),
     );
-
-    // return Container(
-    //   decoration: BoxDecoration(
-    //     boxShadow: [
-    //       BoxShadow(
-    //         color: Colors.grey.withOpacity(0.5),
-    //         spreadRadius: 5,
-    //         blurRadius: 7,
-    //         offset: Offset(0, 3), // changes position of shadow
-    //       ),
-    //     ],
-
-    //     // color: _style.primaryColor(),
-    //     // border: Border.all(width: 1.0),
-    //     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    //   ),
-    //   child: Column(
-    //     children: [
-    //       Padding(
-    //         padding: const EdgeInsets.all(20.0),
-    //         child: Image.network(
-    //           asset.image!,
-    //         ),
-    //       ),
-    //       Text(asset.model?.name ?? 'null'),
-    //       Text(asset.model?.name ?? 'null'),
-    //       Text(asset.model?.name ?? 'null'),
-    //       Text(asset.model?.name ?? 'null'),
-    //     ],
-    //   ),
-    // );
   }
 
-  Widget _assetListView(ListSuccess state) {
-    debugPrint('Deneme : ${state.assets.data?.rows?.length}');
+  Widget _buildError(ListError state) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: state.assets.data?.rows?.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _assetRow(state.assets.data!.rows![index]);
-        },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(
+                Icons.error,
+                color: Colors.red,
+              )
+            ],
+          ),
+          SizedBox(height: _style.whiteSpaceHeight()),
+          Text(state.errorMessage),
+        ],
       ),
     );
-  }
-
-  Widget _assetRow(Asset asset) {
-    // return Row(
-    //   children: [],
-    // );
-    return Text(asset.model?.name ?? 'null');
   }
 }

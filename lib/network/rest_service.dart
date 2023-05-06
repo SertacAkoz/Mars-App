@@ -8,6 +8,7 @@ import 'package:mars_app/models/company_response.dart';
 import 'package:mars_app/models/dto/asset_add_dto.dart';
 import 'package:mars_app/models/dto/get_locations_dto.dart';
 import 'package:mars_app/models/location_response.dart';
+import 'package:mars_app/models/model_response.dart';
 import 'package:mars_app/utils/constants.dart';
 
 import 'package:retrofit/retrofit.dart';
@@ -25,7 +26,7 @@ abstract class RestService {
   Future<HttpResponse<AssetAddResponse>> addAsset(@Body() AssetAddDto dto);
 
   @GET('/hardware')
-  Future<HttpResponse<AssetListResponse>> getAssetListQuery(@Query('limit') String limit, @Query('offset') String offset, @Query('sort') String sort, @Query('order') String order, @Query('location_id') String? locationId, @Query('category_id') String? categoryId, @Query('company_id') String? companyId,);
+  Future<HttpResponse<AssetListResponse>> getAssetListQuery(@Query('limit') String limit, @Query('offset') String offset, @Query('sort') String sort, @Query('order') String order, @Query('location_id') String? locationId, @Query('category_id') String? categoryId, @Query('company_id') String? companyId, @Query('model_id') String? modelId,);
 
   @GET('/locations')
   Future<HttpResponse<LocationResponse>> getLocations(@Body() GetLocationsDto dto);
@@ -35,4 +36,7 @@ abstract class RestService {
 
   @GET('/companies')
   Future<HttpResponse<CompanyResponse>> getCompanies();
+
+  @GET('/models')
+  Future<HttpResponse<ModelResponse>> getModels();
 }

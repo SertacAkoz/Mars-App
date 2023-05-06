@@ -31,6 +31,11 @@ Asset _$AssetFromJson(Map<String, dynamic> json) => Asset(
           : DefaultModel.fromJson(json['location'] as Map<String, dynamic>),
       image: json['image'] as String?,
       purchaseCost: json['purchase_cost'] as String?,
+      age: json['age'] as String?,
+      customFields: json['custom_fields'] == null
+          ? null
+          : CustomFields.fromJson(
+              json['custom_fields'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
@@ -48,4 +53,6 @@ Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
       'location': instance.location,
       'image': instance.image,
       'purchase_cost': instance.purchaseCost,
+      'age': instance.age,
+      'custom_fields': instance.customFields,
     };

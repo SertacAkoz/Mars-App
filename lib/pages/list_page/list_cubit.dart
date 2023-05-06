@@ -9,8 +9,8 @@ import 'package:mars_app/models/company_response.dart';
 import 'package:mars_app/models/dto/get_list_dto.dart';
 import 'package:mars_app/models/dto/get_locations_dto.dart';
 import 'package:mars_app/models/location_response.dart';
+import 'package:mars_app/models/model_response.dart';
 import 'package:mars_app/utils/resource.dart';
-import 'package:meta/meta.dart';
 
 import 'package:mars_app/pages/list_page/list_repo.dart';
 
@@ -28,20 +28,24 @@ class ListCubit extends Cubit<ListState> {
   late Resource<LocationResponse> responseLocations;
   late Resource<CategoryResponse> responseCategories;
   late Resource<CompanyResponse> responseCompanies;
+  late Resource<ModelResponse> responseModels;
 
   NativeSelectItem? selectValueLocation;
   NativeSelectItem? selectValueCategory;
   NativeSelectItem? selectValueCompany;
+  NativeSelectItem? selectValueModel;
 
   Future<void> toggleFilter(bool value) async {
     // emit(ListSuccess(assets: responseAssetList, isExpandedFilterValue: value));
     emit(
       ListSuccess(
-          assets: responseAssetList,
-          categories: responseCategories,
-          locations: responseLocations,
-          companies: responseCompanies,
-          isExpandedFilterValue: value),
+        assets: responseAssetList,
+        categories: responseCategories,
+        locations: responseLocations,
+        companies: responseCompanies,
+        models: responseModels,
+        isExpandedFilterValue: value,
+      ),
     );
   }
 
@@ -54,6 +58,10 @@ class ListCubit extends Cubit<ListState> {
     responseCategories = await _repo.getCategories();
   }
 
+  Future<void> getModels() async {
+    responseModels = await _repo.getModels();
+  }
+
   Future<void> getCompanies() async {
     responseCompanies = await _repo.getCompanies();
   }
@@ -61,22 +69,30 @@ class ListCubit extends Cubit<ListState> {
   Future<void> getAllDatas() async {
     emit(ListLoading());
 
-    selectValueLocation = null;
-    selectValueCategory = null;
-    selectValueCompany = null;
+    _clearFilters();
 
     await getLocations();
     await getCategories();
     await getCompanies();
+    await getModels();
     await getAssetList(limit: '50');
-    emit(
-      ListSuccess(
-        assets: responseAssetList,
-        categories: responseCategories,
-        locations: responseLocations,
-        companies: responseCompanies,
-      ),
-    );
+    if (responseAssetList.status == Status.SUCCESS) {
+      emit(
+        ListSuccess(
+          assets: responseAssetList,
+          categories: responseCategories,
+          locations: responseLocations,
+          companies: responseCompanies,
+          models: responseModels,
+        ),
+      );
+    } else if (responseAssetList.status == Status.ERROR) {
+      emit(
+        ListError(
+          errorMessage: responseAssetList.message ?? 'Something went wrong!',
+        ),
+      );
+    }
   }
 
   void showLocationSelectBox() async {
@@ -104,9 +120,44 @@ class ListCubit extends Cubit<ListState> {
           categories: responseCategories,
           locations: responseLocations,
           companies: responseCompanies,
+          models: responseModels,
           selectValueLocation: selectValueLocation,
           selectValueCompany: selectValueCompany,
           selectValueCategory: selectValueCategory,
+          selectValueModels: selectValueModel,
+        ),
+      );
+    }
+  }
+
+  void showModelsSelectBox() async {
+    List<NativeSelectItem> selectList = [];
+    for (var index = 0; index < responseModels.data!.rows!.length; index++) {
+      selectList.add(NativeSelectItem(
+          value: responseModels.data!.rows![index].id.toString(),
+          label:
+              '${responseModels.data!.rows![index].manufacturer?.name ?? ''} ${responseModels.data!.rows![index].name?.replaceAll('&quot;', '')}'));
+    }
+    final selectedItem = await FlutterNativeSelect.openSelect(
+      doneText: 'Select',
+      items: selectList,
+    );
+
+    if (selectedItem != null) {
+      final result =
+          selectList.where((element) => element.value == selectedItem).toList();
+      selectValueModel = result[0];
+      emit(
+        ListSuccess(
+          assets: responseAssetList,
+          categories: responseCategories,
+          locations: responseLocations,
+          companies: responseCompanies,
+          models: responseModels,
+          selectValueLocation: selectValueLocation,
+          selectValueCompany: selectValueCompany,
+          selectValueCategory: selectValueCategory,
+          selectValueModels: selectValueModel,
         ),
       );
     }
@@ -136,16 +187,20 @@ class ListCubit extends Cubit<ListState> {
             categories: responseCategories,
             locations: responseLocations,
             companies: responseCompanies,
+            models: responseModels,
             selectValueLocation: selectValueLocation,
             selectValueCompany: selectValueCompany,
-            selectValueCategory: selectValueCategory,),
+            selectValueCategory: selectValueCategory,
+            selectValueModels: selectValueModel),
       );
     }
   }
 
   void showCategorySelectBox() async {
     List<NativeSelectItem> selectList = [];
-    for (var index = 0; index < responseCategories.data!.rows!.length; index++) {
+    for (var index = 0;
+        index < responseCategories.data!.rows!.length;
+        index++) {
       selectList.add(NativeSelectItem(
           value: responseCategories.data!.rows![index].id.toString(),
           label: '${responseCategories.data!.rows![index].name}'));
@@ -167,9 +222,11 @@ class ListCubit extends Cubit<ListState> {
           categories: responseCategories,
           locations: responseLocations,
           companies: responseCompanies,
+          models: responseModels,
           selectValueLocation: selectValueLocation,
           selectValueCompany: selectValueCompany,
           selectValueCategory: selectValueCategory,
+          selectValueModels: selectValueModel,
         ),
       );
     }
@@ -182,17 +239,34 @@ class ListCubit extends Cubit<ListState> {
       location_id: selectValueLocation?.value,
       company_id: selectValueCompany?.value,
       category_id: selectValueCategory?.value,
+      model_id: selectValueModel?.value,
     );
     responseAssetList = await _repo.getAssetList(dto);
+    if (responseAssetList.status == Status.SUCCESS) {
+      emit(
+        ListSuccess(
+          assets: responseAssetList,
+          categories: responseCategories,
+          locations: responseLocations,
+          companies: responseCompanies,
+          models: responseModels,
+        ),
+      );
+    } else if (responseAssetList.status == Status.ERROR) {
+      emit(
+        ListError(
+            errorMessage: responseAssetList.message ?? 'Something went wrong!'),
+      );
+    }
 
-    emit(
-      ListSuccess(
-        assets: responseAssetList,
-        categories: responseCategories,
-        locations: responseLocations,
-        companies: responseCompanies,
-      ),
-    );
+    _clearFilters();
+  }
+
+  void _clearFilters() {
+    selectValueCategory = null;
+    selectValueCompany = null;
+    selectValueLocation = null;
+    selectValueModel = null;
   }
 
   void clearFilterDatas() {
@@ -202,7 +276,11 @@ class ListCubit extends Cubit<ListState> {
         categories: responseCategories,
         locations: responseLocations,
         companies: responseCompanies,
+        models: responseModels,
         selectValueLocation: null,
+        selectValueCategory: null,
+        selectValueCompany: null,
+        selectValueModels: null,
       ),
     );
   }
@@ -232,10 +310,5 @@ class ListCubit extends Cubit<ListState> {
 
     // final response = await _repo.getAssetList(dto);
     responseAssetList = await _repo.getAssetList(dto);
-
-    debugPrint(
-        'Response List Lenght : ${responseAssetList.data?.rows?.length}');
-
-    // emit(ListSuccess(assets: responseAssetList));
   }
 }

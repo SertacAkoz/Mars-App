@@ -13,6 +13,7 @@ class GetListDto {
   final String? location_id;
   final String? category_id;
   final String? company_id;
+  final String? model_id;
 
   GetListDto({
     required this.limit,
@@ -22,6 +23,7 @@ class GetListDto {
     this.location_id,
     this.category_id,
     this.company_id,
+    this.model_id,
   })  : sort = sortParam ?? 'created_at',
         order = orderParam ?? 'desc',
         offset = offsetParam ?? '0';

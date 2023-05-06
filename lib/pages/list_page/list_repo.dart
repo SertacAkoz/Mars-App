@@ -22,6 +22,7 @@ class ListRepository with ListMixin, AssetFeatureMixin {
         dto.location_id,
         dto.category_id,
         dto.company_id,
+        dto.model_id,
       );
       return Resource.success(response.data);
     } catch (e) {

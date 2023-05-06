@@ -3,6 +3,7 @@ import 'package:mars_app/models/category_response.dart';
 import 'package:mars_app/models/company_response.dart';
 import 'package:mars_app/models/dto/get_locations_dto.dart';
 import 'package:mars_app/models/location_response.dart';
+import 'package:mars_app/models/model_response.dart';
 import 'package:mars_app/network/rest_service.dart';
 import 'package:mars_app/utils/resource.dart';
 
@@ -30,6 +31,15 @@ mixin AssetFeatureMixin {
   Future<Resource<CompanyResponse>> getCompanies() async {
     try {
       final response = await _service.getCompanies();
+      return Resource.success(response.data);
+    } catch (e) {
+      return Resource.error(e.toString());
+    }
+  }
+
+  Future<Resource<ModelResponse>> getModels() async {
+    try {
+      final response = await _service.getModels();
       return Resource.success(response.data);
     } catch (e) {
       return Resource.error(e.toString());
