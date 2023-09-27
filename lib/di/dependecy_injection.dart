@@ -1,12 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mars_app/network/rest_service.dart';
 import 'package:mars_app/pages/asset_add_page/asset_add_repo.dart';
 import 'package:mars_app/pages/asset_add_page/asset_add_style.dart';
+import 'package:mars_app/pages/asset_detail_page/asset_detail_repo.dart';
 import 'package:mars_app/pages/asset_detail_page/asset_detail_style.dart';
+import 'package:mars_app/pages/favourite_page/favourite_repo.dart';
+import 'package:mars_app/pages/favourite_page/favourite_style.dart';
 import 'package:mars_app/pages/list_page/list_repo.dart';
 import 'package:mars_app/pages/list_page/list_style.dart';
 import 'package:mars_app/pages/not_found_page/not_found_style.dart';
+import 'package:mars_app/services/rest_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -22,6 +25,7 @@ class DependecyInjection {
     getIt.registerSingleton<AssetAddStyle>(AssetAddStyle());
     getIt.registerSingleton<AssetDetailStyle>(AssetDetailStyle());
     getIt.registerSingleton<NotFoundStyle>(NotFoundStyle());
+    getIt.registerSingleton<FavouriteStyle>(FavouriteStyle());
   }
 
   void provideServices() {
@@ -31,5 +35,7 @@ class DependecyInjection {
   void provideRepositories() {
     getIt.registerSingleton<ListRepository>(ListRepository(service: getIt.get<RestService>()));
     getIt.registerSingleton<AssetAddRepository>(AssetAddRepository(service: getIt.get<RestService>()));
+    getIt.registerSingleton<FavouriteRepository>(FavouriteRepository());
+    getIt.registerSingleton<AssetDetailRepository>(AssetDetailRepository());
   }
 }

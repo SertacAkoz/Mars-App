@@ -2,7 +2,7 @@ import 'package:mars_app/inheritance/asset_feature_mixin.dart';
 import 'package:mars_app/inheritance/list_mixin.dart';
 import 'package:mars_app/models/dto/get_list_dto.dart';
 import 'package:mars_app/models/asset_list_response.dart';
-import 'package:mars_app/network/rest_service.dart';
+import 'package:mars_app/services/rest_service.dart';
 import 'package:mars_app/utils/resource.dart';
 
 class ListRepository with ListMixin, AssetFeatureMixin {

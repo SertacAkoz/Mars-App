@@ -8,13 +8,14 @@ import 'package:mars_app/pages/asset_add_page/asset_add_cubit.dart';
 import 'package:mars_app/pages/asset_add_page/asset_add_style.dart';
 import 'package:mars_app/utils/resource.dart';
 import 'package:mars_app/utils/utils.dart';
+import 'package:mars_app/widgets/box.dart';
 import 'package:mars_app/widgets/custom_header.dart';
 import 'package:mars_app/widgets/loading_widget.dart';
 
 class AssetAddView extends StatelessWidget {
-  AssetAddStyle _style;
-  AssetAddCubit _viewModel;
-  AssetAddView({
+  final AssetAddStyle _style;
+  final AssetAddCubit _viewModel;
+  const AssetAddView({
     Key? key,
     required AssetAddStyle style,
     required AssetAddCubit viewModel,
@@ -33,7 +34,7 @@ class AssetAddView extends StatelessWidget {
   Scaffold _buildScaffold() {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(0.0, 63.0, 0.0, 0.0),
+        padding: _style.headerPadding(),
         child: Column(
           children: [
             CustomHeaderWidget(
@@ -115,7 +116,7 @@ class AssetAddView extends StatelessWidget {
             border: OutlineInputBorder(),
           ),
         ),
-        SizedBox(height: _style.whiteSpaceHeight()),
+        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
         TextFormField(
           keyboardType: TextInputType.number,
           controller: _viewModel.purchaseTextController,
@@ -125,7 +126,7 @@ class AssetAddView extends StatelessWidget {
             border: OutlineInputBorder(),
           ),
         ),
-        SizedBox(height: _style.whiteSpaceHeight()),
+        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
         ElevatedButton(
           onPressed: () {
             if (_viewModel.checkForm()) {
@@ -154,7 +155,7 @@ class AssetAddView extends StatelessWidget {
           },
           child: const Text('Add Asset'),
         ),
-        SizedBox(height: _style.whiteSpaceHeight()),
+        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
         _postWidgets(state),
       ],
     );

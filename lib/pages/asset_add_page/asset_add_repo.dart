@@ -3,7 +3,7 @@ import 'package:mars_app/inheritance/asset_add_mixin.dart';
 import 'package:mars_app/inheritance/asset_feature_mixin.dart';
 import 'package:mars_app/models/dto/asset_add_dto.dart';
 import 'package:mars_app/models/asset_add_response.dart';
-import 'package:mars_app/network/rest_service.dart';
+import 'package:mars_app/services/rest_service.dart';
 import 'package:mars_app/utils/resource.dart';
 
 class AssetAddRepository with AssetAddMixin, AssetFeatureMixin {

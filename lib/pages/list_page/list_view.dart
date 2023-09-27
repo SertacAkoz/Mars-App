@@ -8,6 +8,7 @@ import 'package:mars_app/models/asset.dart';
 import 'package:mars_app/pages/list_page/list_cubit.dart';
 import 'package:mars_app/pages/list_page/list_style.dart';
 import 'package:mars_app/utils/utils.dart';
+import 'package:mars_app/widgets/box.dart';
 import 'package:mars_app/widgets/custom_header.dart';
 import 'package:mars_app/widgets/loading_widget.dart';
 
@@ -330,7 +331,7 @@ class AssetListView extends StatelessWidget {
                   Icons.place_rounded,
                   size: 15,
                 ),
-                SizedBox(width: _style.whiteSpaceHeight()),
+                const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
                 Text(asset.location?.name ?? 'No Data'),
               ],
             ),
@@ -360,7 +361,7 @@ class AssetListView extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(height: _style.whiteSpaceHeight()),
+          const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
           Text(state.errorMessage),
         ],
       ),

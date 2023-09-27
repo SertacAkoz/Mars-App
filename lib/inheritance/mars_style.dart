@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MarsStyle{
+abstract class MarsStyle{
   
   Color primaryColor(){
     return const Color(0xFF432BFF);
@@ -17,7 +17,7 @@ class MarsStyle{
     return TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: primaryColor());
   }
 
-  double whiteSpaceHeight(){
-    return 10;
+  EdgeInsets headerPadding(){
+    return const EdgeInsets.fromLTRB(0.0, 63.0, 0.0, 0.0);
   }
 }

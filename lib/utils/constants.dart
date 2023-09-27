@@ -4,5 +4,6 @@ class Constants {
   Constants._();
 
   static const BASE_URL = 'https://develop.snipeitapp.com/api/v1';
+  static const FAVOURITE_KEY = 'FAVOURITE';
 
 }

@@ -155,45 +155,37 @@ class _CustomDrawerState extends State<CustomDrawer> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const SizedBox(height: 50),
-              Padding(
-                padding: const EdgeInsets.only(left: 25),
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                  // padding: const EdgeInsets.only(left: 25),
-                  alignment: Alignment.centerLeft,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: Image.asset('assets/images/mars.jpeg'),
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 25),
+              //   child: Container(
+              //     width: 80,
+              //     height: 80,
+              //     decoration: BoxDecoration(
+              //       border: Border.all(color: Colors.white),
+              //       borderRadius: const BorderRadius.all(
+              //         Radius.circular(15),
+              //       ),
+              //     ),
+              //     // padding: const EdgeInsets.only(left: 25),
+              //     alignment: Alignment.centerLeft,
+              //     child: ClipRRect(
+              //       borderRadius: BorderRadius.circular(15.0),
+              //       child: Image.asset('assets/images/mars.jpeg'),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 25),
               InkWell(
                 onTap: () {
-                  Utils.navigate(navigationPath: '/assetList', context: context);
+                  Utils.navigate(
+                      navigationPath: '/assetList', context: context);
                 },
                 child: const ListTile(
                   leading: Icon(Icons.list_alt_rounded),
                   title: Text('Assets'),
                 ),
               ),
-              const SizedBox(
-                width: 206,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 74, right: 0),
-                  child: Divider(
-                    color: Color(0xfff4f4f8),
-                    height: 0,
-                  ),
-                ),
-              ),
+              _customDivider(),
               InkWell(
                 onTap: () {
                   Utils.navigate(navigationPath: '/assetAdd', context: context);
@@ -203,8 +195,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   title: Text('Add Asset'),
                 ),
               ),
+              _customDivider(),
+              InkWell(
+                onTap: () {
+                  Utils.navigate(navigationPath: '/favourites', context: context);
+                },
+                child: const ListTile(
+                  leading: Icon(Icons.favorite_rounded),
+                  title: Text('Favourite'),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _customDivider() {
+    return const SizedBox(
+      width: 206,
+      child: Padding(
+        padding: EdgeInsets.only(left: 74, right: 0),
+        child: Divider(
+          color: Color(0xfff4f4f8),
+          height: 0,
         ),
       ),
     );

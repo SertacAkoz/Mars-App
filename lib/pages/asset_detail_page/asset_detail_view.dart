@@ -2,123 +2,188 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mars_app/helpers/toast_controller.dart';
 
 import 'package:mars_app/models/asset.dart';
+import 'package:mars_app/pages/asset_detail_page/asset_detail_cubit.dart';
 import 'package:mars_app/pages/asset_detail_page/asset_detail_style.dart';
+import 'package:mars_app/pages/asset_detail_page/components/asset_detail_table.dart';
+import 'package:mars_app/widgets/box.dart';
 
 class AssetDetailView extends StatelessWidget {
   final AssetDetailStyle _style;
+  final AssetDetailCubit _viewModel;
   final Asset _asset;
   const AssetDetailView({
     Key? key,
     required AssetDetailStyle style,
+    required AssetDetailCubit viewModel,
     required Asset asset,
   })  : _style = style,
         _asset = asset,
+        _viewModel = viewModel,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Detail : ${_asset.customFields?.ram?.field}');
+    return BlocProvider(
+      create: (context) => _viewModel,
+      child: _buildScaffold(),
+    );
+  }
+
+  Scaffold _buildScaffold() {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: _style.primaryColor(),
         title: const Text('Asset Detail'),
       ),
-      body: Column(
-        children: [
-          Hero(
-            tag: _asset.id!,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(0.0),
-                child: CachedNetworkImage(
-                  imageUrl: _asset.image!,
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+      // body: _buildBody(),
+      body: BlocConsumer<AssetDetailCubit, AssetDetailState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return _buildBody(context);
+        },
+      ),
+    );
+  }
+
+  Column _buildBody(BuildContext context) {
+    return Column(
+      children: [
+        Hero(
+          tag: _asset.id!,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(0.0),
+                  child: CachedNetworkImage(
+                    imageUrl: _asset.image!,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
                 ),
               ),
-            ),
-          ),
-          // const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _asset.age ?? 'No Data',
-                  style: _style.ageTextStyle(),
-                ),
-                Text(
-                  _asset.purchaseCost ?? 'No Data',
-                  style: _style.purchaseCostTextStyle(),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            _asset.manufacturer?.name ?? 'No Data',
-            style: _style.titleTextStyle(),
-          ),
-          SizedBox(height: _style.whiteSpaceHeight()),
-          Text(
-            _asset.model?.name ?? 'No Data',
-            style: _style.titleTextStyle(),
-          ),
-          // const Divider(),
-          SizedBox(height: _style.whiteSpaceHeight()),
-          // Text(_asset.category?.name ?? 'No Data'),
-          // SizedBox(height: _style.whiteSpaceHeight()),
-          // Text(_asset.purchaseCost ?? 'No Data'),
-          // _tableWidget()
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 25),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //     children: [
-          //       Text(_asset.location?.name ?? 'No Data'),
-          //       Text(_asset.purchaseCost ?? 'No Data'),
-          //     ],
-          //   ),
-          // ),
-          _customFields(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _tableContainer(
-                          title: 'Category',
-                          value: _asset.category?.name ?? 'No Data'),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Material(
+                  child: IconButton(
+                    onPressed: () async {
+                      debugPrint('Favourites Clicked');
+                      final result = await _viewModel.addToFavourite(_asset);
+                      if (context.mounted) {
+                        if (result) {
+                          ToastController.showSuccess(
+                            context: context,
+                            value: 'Asset Added to Favourite',
+                          );
+                        } else {
+                          ToastController.showError(
+                            context: context,
+                            value: 'Something went wrong!',
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.favorite_rounded,
+                      size: 50,
+                      color: Colors.red,
                     ),
-                    const SizedBox(width: 25),
-                    Expanded(
-                      child: _tableContainer(
-                          title: 'Location',
-                          value: _asset.location?.name ?? 'No Data'),
-                    )
-                  ],
+                  ),
                 ),
-                SizedBox(height: _style.whiteSpaceHeight()),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _tableContainer(
-                          title: 'Supplier',
-                          value: _asset.supplier?.name ?? 'No Data'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        // const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _asset.age ?? 'No Data',
+                style: _style.ageTextStyle(),
+              ),
+              Text(
+                _asset.purchaseCost ?? 'No Data',
+                style: _style.purchaseCostTextStyle(),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          _asset.manufacturer?.name ?? 'No Data',
+          style: _style.titleTextStyle(),
+        ),
+        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+        Text(
+          _asset.model?.name ?? 'No Data',
+          style: _style.titleTextStyle(),
+        ),
+        // const Divider(),
+        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+        // Text(_asset.category?.name ?? 'No Data'),
+        // const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+        // Text(_asset.purchaseCost ?? 'No Data'),
+        // _tableWidget()
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 25),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: [
+        //       Text(_asset.location?.name ?? 'No Data'),
+        //       Text(_asset.purchaseCost ?? 'No Data'),
+        //     ],
+        //   ),
+        // ),
+        _customFields(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: AssetDetailTable(
+                      title: 'Category',
+                      value: _asset.category?.name ?? 'No Data',
+                      style: _style,
+                    ),
+                  ),
+                  const SizedBox(width: 25),
+                  Expanded(
+                    child: AssetDetailTable(
+                      title: 'Location',
+                      value: _asset.location?.name ?? 'No Data',
+                      style: _style,
+                    ),
+                  )
+                ],
+              ),
+              const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+              Row(
+                children: [
+                  Expanded(
+                    child: AssetDetailTable(
+                      title: 'Supplier',
+                      value: _asset.supplier?.name ?? 'No Data',
+                      style: _style,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -126,7 +191,7 @@ class AssetDetailView extends StatelessWidget {
     if (_asset.customFields?.ram != null) {
       return Column(
         children: [
-          SizedBox(height: _style.whiteSpaceHeight()),
+          const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
           Divider(
             color: _style.primaryColor(),
           ),
@@ -151,7 +216,7 @@ class AssetDetailView extends StatelessWidget {
           Divider(
             color: _style.primaryColor(),
           ),
-          SizedBox(height: _style.whiteSpaceHeight()),
+          const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
         ],
       );
     } else {
@@ -195,64 +260,34 @@ class AssetDetailView extends StatelessWidget {
     }
   }
 
-  Widget _tableWidget() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Column(
-          children: [
-            _tableRow(
-                title: 'Category', value: _asset.category?.name ?? 'No Data'),
-            SizedBox(height: _style.whiteSpaceHeight()),
-            _tableRow(
-                title: 'Purchase Cost',
-                value: _asset.purchaseCost ?? 'No Data'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _tableContainer({required String title, required String value}) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
-        color: _style.primaryColor().withOpacity(0.2),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const Divider(color: Colors.black),
-            Text(
-              value,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _tableRow({required String title, required String value}) {
-    return Flexible(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title),
-          Text(value),
-        ],
-      ),
-    );
-  }
+  // Widget _tableContainer({required String title, required String value}) {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: const BorderRadius.all(
+  //         Radius.circular(10),
+  //       ),
+  //       color: _style.primaryColor().withOpacity(0.2),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(10.0),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Text(
+  //             title,
+  //             style: const TextStyle(
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.black,
+  //             ),
+  //           ),
+  //           const Divider(color: Colors.black),
+  //           Text(
+  //             value,
+  //             style: const TextStyle(color: Colors.black),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }
