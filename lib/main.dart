@@ -12,7 +12,8 @@ void main() async {
   SecurityContext.defaultContext
       .setTrustedCertificatesBytes(data.buffer.asUint8List());
 
-  DependecyInjection();
+  // DependecyInjection();
+  DependecyInjection.instance;
   runApp(const MyApp());
 }
 
