@@ -81,99 +81,121 @@ class AssetAddView extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 50),
-        InkWell(
-          onTap: () {
-            _viewModel.showLocationSelectBox();
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: Column(
-              children: [
-                const Divider(),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Location'),
-                    Text(
-                      Utils.getCityNameFromLabel(
-                          state.selectValueLocation?.label ?? '...'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                const Divider(),
-              ],
-            ),
-          ),
-        ),
+        _locationWidget(state),
         const SizedBox(height: 50),
-        TextFormField(
-          controller: _viewModel.nameTextController,
-          decoration: const InputDecoration(
-            icon: Icon(Icons.favorite),
-            labelText: 'Asset Name',
-            border: OutlineInputBorder(),
-          ),
-        ),
+        _inputName(),
         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-        TextFormField(
-          keyboardType: TextInputType.number,
-          controller: _viewModel.purchaseTextController,
-          decoration: const InputDecoration(
-            icon: Icon(Icons.favorite),
-            labelText: 'Asset PurchaseCost',
-            border: OutlineInputBorder(),
-          ),
-        ),
+        _inputPurchase(),
         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-        ElevatedButton(
-          onPressed: () {
-            if (_viewModel.checkForm()) {
-              try {
-                AssetAddDto dto = AssetAddDto(
-                  model_id: '2',
-                  status_id: 1,
-                  asset_tag: _viewModel.getRandomString(),
-                  name: _viewModel.nameTextController.text,
-                  purchase_cost:
-                      double.parse(_viewModel.purchaseTextController.text),
-                  location_id: int.parse(state.selectValueLocation!.value),
-                );
-                // debugPrint('View DTO : ${dto.status_id}');
-                _viewModel.addAsset(dto);
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Please fill out the form completely'),
-                ));
-              }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Please fill out the form completely'),
-              ));
-            }
-          },
-          child: const Text('Add Asset'),
-        ),
+        _buttonAdd(state, context),
         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
         _postWidgets(state),
       ],
+    );
+  }
+
+  ElevatedButton _buttonAdd(AssetAddSuccess state, BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_viewModel.checkForm()) {
+          try {
+            AssetAddDto dto = AssetAddDto(
+              model_id: '2',
+              status_id: 1,
+              asset_tag: _viewModel.getRandomString(),
+              name: _viewModel.nameTextController.text,
+              purchase_cost:
+                  double.parse(_viewModel.purchaseTextController.text),
+              location_id: int.parse(state.selectValueLocation!.value),
+            );
+            // debugPrint('View DTO : ${dto.status_id}');
+            _viewModel.addAsset(dto);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Please fill out the form completely'),
+            ));
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Please fill out the form completely'),
+          ));
+        }
+      },
+      child: const Text('Add Asset'),
+    );
+  }
+
+  TextFormField _inputPurchase() {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      controller: _viewModel.purchaseTextController,
+      decoration: const InputDecoration(
+        icon: Icon(Icons.favorite),
+        labelText: 'Asset PurchaseCost',
+        border: OutlineInputBorder(),
+      ),
+    );
+  }
+
+  TextFormField _inputName() {
+    return TextFormField(
+      controller: _viewModel.nameTextController,
+      decoration: const InputDecoration(
+        icon: Icon(Icons.favorite),
+        labelText: 'Asset Name',
+        border: OutlineInputBorder(),
+      ),
+    );
+  }
+
+  InkWell _locationWidget(AssetAddSuccess state) {
+    return InkWell(
+      onTap: () {
+        _viewModel.showLocationSelectBox();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: Column(
+          children: [
+            const Divider(),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Location'),
+                Text(
+                  Utils.getCityNameFromLabel(
+                      state.selectValueLocation?.label ?? '...'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Divider(),
+          ],
+        ),
+      ),
     );
   }
 }
 
 Widget _postWidgets(AssetAddSuccess state) {
   // debugPrint('Deneme : ${state.response?.data?.messages}');
-  if (state.response?.status == Status.ERROR ) {
+  if (state.response?.status == Status.ERROR) {
     return Column(
       children: [
-        Text(state.response?.message ?? 'Something went wrong!', textAlign: TextAlign.center,),
+        Text(
+          state.response?.message ?? 'Something went wrong!',
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   } else {
     return Column(
       children: [
-        Text(state.response?.data?.messages ?? '', textAlign: TextAlign.center,),
+        Text(
+          state.response?.data?.messages ?? '',
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }

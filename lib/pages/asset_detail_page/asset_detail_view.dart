@@ -52,82 +52,12 @@ class AssetDetailView extends StatelessWidget {
   Column _buildBody(BuildContext context) {
     return Column(
       children: [
-        Hero(
-          tag: _asset.id!,
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(0.0),
-                  child: CachedNetworkImage(
-                    imageUrl: _asset.image!,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Material(
-                  child: IconButton(
-                    onPressed: () async {
-                      debugPrint('Favourites Clicked');
-                      final result = await _viewModel.addToFavourite(_asset);
-                      if (context.mounted) {
-                        if (result) {
-                          ToastController.showSuccess(
-                            context: context,
-                            value: 'Asset Added to Favourite',
-                          );
-                        } else {
-                          ToastController.showError(
-                            context: context,
-                            value: 'Something went wrong!',
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.favorite_rounded,
-                      size: 50,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        _imageWidget(context),
         // const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _asset.age ?? 'No Data',
-                style: _style.ageTextStyle(),
-              ),
-              Text(
-                _asset.purchaseCost ?? 'No Data',
-                style: _style.purchaseCostTextStyle(),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          _asset.manufacturer?.name ?? 'No Data',
-          style: _style.titleTextStyle(),
-        ),
+        _costWidget(),
+        _titleWidget(),
         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-        Text(
-          _asset.model?.name ?? 'No Data',
-          style: _style.titleTextStyle(),
-        ),
+        _subTitleWidget(),
         // const Divider(),
         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
         // Text(_asset.category?.name ?? 'No Data'),
@@ -145,45 +75,93 @@ class AssetDetailView extends StatelessWidget {
         //   ),
         // ),
         _customFields(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: AssetDetailTable(
-                      title: 'Category',
-                      value: _asset.category?.name ?? 'No Data',
-                      style: _style,
-                    ),
-                  ),
-                  const SizedBox(width: 25),
-                  Expanded(
-                    child: AssetDetailTable(
-                      title: 'Location',
-                      value: _asset.location?.name ?? 'No Data',
-                      style: _style,
-                    ),
-                  )
-                ],
-              ),
-              const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-              Row(
-                children: [
-                  Expanded(
-                    child: AssetDetailTable(
-                      title: 'Supplier',
-                      value: _asset.supplier?.name ?? 'No Data',
-                      style: _style,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        AssetDetailTable(style: _style, asset: _asset),
       ],
+    );
+  }
+
+  Text _subTitleWidget() {
+    return Text(
+      _asset.model?.name ?? 'No Data',
+      style: _style.titleTextStyle(),
+    );
+  }
+
+  Text _titleWidget() {
+    return Text(
+      _asset.manufacturer?.name ?? 'No Data',
+      style: _style.titleTextStyle(),
+    );
+  }
+
+  Padding _costWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            _asset.age ?? 'No Data',
+            style: _style.ageTextStyle(),
+          ),
+          Text(
+            _asset.purchaseCost ?? 'No Data',
+            style: _style.purchaseCostTextStyle(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Hero _imageWidget(BuildContext context) {
+    return Hero(
+      tag: _asset.id!,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(0.0),
+              child: CachedNetworkImage(
+                imageUrl: _asset.image!,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Material(
+              child: IconButton(
+                onPressed: () async {
+                  debugPrint('Favourites Clicked');
+                  final result = await _viewModel.addToFavourite(_asset);
+                  if (context.mounted) {
+                    if (result) {
+                      ToastController.showSuccess(
+                        context: context,
+                        value: 'Asset Added to Favourite',
+                      );
+                    } else {
+                      ToastController.showError(
+                        context: context,
+                        value: 'Something went wrong!',
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(
+                  Icons.favorite_rounded,
+                  size: 50,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

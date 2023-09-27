@@ -6,14 +6,6 @@ class ListStyle extends MarsStyle{
     return 75;
   }
 
-  double filterWhitespaceHeight(){
-    return 20;
-  }
-
-  double errorWhitespaceHeight(){
-    return 20;
-  }
-
   TextStyle rowTitleTextTyle(){
     return const TextStyle(fontWeight: FontWeight.bold);
   }

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mars_app/models/asset.dart';
+import 'package:mars_app/pages/list_page/components/no_result.dart';
 
 import 'package:mars_app/pages/list_page/list_cubit.dart';
 import 'package:mars_app/pages/list_page/list_style.dart';
@@ -60,10 +61,9 @@ class AssetListView extends StatelessWidget {
                         return const LoadingWidget();
                       } else if (state is ListSuccess) {
                         return _buildSuccess(state, context);
-                      } else if(state is ListLoading){
+                      } else if (state is ListLoading) {
                         return const LoadingWidget();
-                      }
-                      else {
+                      } else {
                         final result = state as ListError;
                         return _buildError(result);
                       }
@@ -98,163 +98,150 @@ class AssetListView extends StatelessWidget {
         ),
       ),
       children: <Widget>[
-        InkWell(
-          onTap: () {
-            _viewModel.showLocationSelectBox();
-          },
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Location'),
-                Text(
-                  Utils.getCityNameFromLabel(
-                      state.selectValueLocation?.label ?? '...'),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: _style.filterWhitespaceHeight()),
-        InkWell(
-          onTap: () {
-            _viewModel.showCompanySelectBox();
-          },
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Company'),
-                Text(state.selectValueCompany?.label ?? '...'),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: _style.filterWhitespaceHeight()),
-        InkWell(
-          onTap: () {
-            _viewModel.showCategorySelectBox();
-          },
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Category'),
-                Text(state.selectValueCategory?.label ?? '...'),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: _style.filterWhitespaceHeight()),
-        InkWell(
-          onTap: () {
-            _viewModel.showModelsSelectBox();
-          },
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Models'),
-                Text(state.selectValueModels?.label ?? '...'),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: _style.filterWhitespaceHeight()),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: _style.primaryColor()),
-              onPressed: () {
-                _viewModel.searchList();
-              },
-              child: const Icon(Icons.search_rounded),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: _style.primaryColor()),
-              onPressed: () {
-                // _viewModel.getAllDatas();
-                _viewModel.clearFilterDatas();
-              },
-              child: const Icon(Icons.clear_rounded),
-            ),
-          ],
-        ),
+        _filterLocation(state),
+        const Box(size: BoxSize.MEDIUM, type: BoxType.VERTICAL),
+        _filterCompany(state),
+        const Box(size: BoxSize.MEDIUM, type: BoxType.VERTICAL),
+        _filterCategory(state),
+        const Box(size: BoxSize.MEDIUM, type: BoxType.VERTICAL),
+        _filterModel(state),
+        const Box(size: BoxSize.MEDIUM, type: BoxType.VERTICAL),
+        _filterButtons(),
       ],
       onExpansionChanged: (bool expanding) =>
           _viewModel.toggleFilter(expanding),
     );
   }
 
-  Widget _assetsGridView(ListSuccess state) {
-    if (state.assets.data!.rows!.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Row _filterButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ElevatedButton(
+          style:
+              ElevatedButton.styleFrom(backgroundColor: _style.primaryColor()),
+          onPressed: () {
+            _viewModel.searchList();
+          },
+          child: const Icon(Icons.search_rounded),
+        ),
+        ElevatedButton(
+          style:
+              ElevatedButton.styleFrom(backgroundColor: _style.primaryColor()),
+          onPressed: () {
+            // _viewModel.getAllDatas();
+            _viewModel.clearFilterDatas();
+          },
+          child: const Icon(Icons.clear_rounded),
+        ),
+      ],
+    );
+  }
+
+  InkWell _filterModel(ListSuccess state) {
+    return InkWell(
+      onTap: () {
+        _viewModel.showModelsSelectBox();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.warning_rounded,
-                  color: _style.primaryColor(),
-                  size: 45,
-                )
-              ],
-            ),
-            SizedBox(height: _style.errorWhitespaceHeight()),
-            const Text(
-              'No products were found matching your search criteria. Please refresh the page to see all products.',
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: _style.errorWhitespaceHeight()),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: _style.primaryColor()),
-              onPressed: () {
-                _viewModel.getAllDatas();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Refresh'),
-                  SizedBox(width: _style.errorWhitespaceHeight()),
-                  const Icon(Icons.refresh_rounded),
-                ],
-              ),
+            const Text('Models'),
+            Text(state.selectValueModels?.label ?? '...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InkWell _filterCategory(ListSuccess state) {
+    return InkWell(
+      onTap: () {
+        _viewModel.showCategorySelectBox();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Category'),
+            Text(state.selectValueCategory?.label ?? '...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InkWell _filterCompany(ListSuccess state) {
+    return InkWell(
+      onTap: () {
+        _viewModel.showCompanySelectBox();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Company'),
+            Text(state.selectValueCompany?.label ?? '...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InkWell _filterLocation(ListSuccess state) {
+    return InkWell(
+      onTap: () {
+        _viewModel.showLocationSelectBox();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: _style.filterRowPadding()),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Location'),
+            Text(
+              Utils.getCityNameFromLabel(
+                  state.selectValueLocation?.label ?? '...'),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _assetsGridView(ListSuccess state) {
+    if (state.assets.data!.rows!.isEmpty) {
+      return NoResultView(
+        style: _style,
+        onPressed: () {
+          _viewModel.getAllDatas();
+        },
       );
     } else {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 0,
-            mainAxisSpacing: 30,
-            mainAxisExtent: 300,
-          ),
-          itemCount: state.assets.data?.rows?.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _assetGridViewRow(state.assets.data!.rows![index], context);
-          },
-        ),
-      );
+      return _buildGridView(state);
     }
+  }
+
+  Padding _buildGridView(ListSuccess state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 30,
+          mainAxisExtent: 300,
+        ),
+        itemCount: state.assets.data?.rows?.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _assetGridViewRow(state.assets.data!.rows![index], context);
+        },
+      ),
+    );
   }
 
   Widget expandedListTileItem(Text title) {

@@ -1,46 +1,57 @@
 import 'package:flutter/material.dart';
 
+import 'package:mars_app/models/asset.dart';
 import 'package:mars_app/pages/asset_detail_page/asset_detail_style.dart';
+import 'package:mars_app/pages/asset_detail_page/components/asset_detail_container.dart';
+import 'package:mars_app/widgets/box.dart';
 
 class AssetDetailTable extends StatelessWidget {
-  final String title;
-  final String value;
   final AssetDetailStyle style;
+  final Asset asset;
   const AssetDetailTable({
     Key? key,
-    required this.title,
-    required this.value,
     required this.style,
+    required this.asset,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
-        color: style.primaryColor().withOpacity(0.2),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: AssetDetailContainer(
+                  title: 'Category',
+                  value: asset.category?.name ?? 'No Data',
+                  style: style,
+                ),
               ),
-            ),
-            const Divider(color: Colors.black),
-            Text(
-              value,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
+              const SizedBox(width: 25),
+              Expanded(
+                child: AssetDetailContainer(
+                  title: 'Location',
+                  value: asset.location?.name ?? 'No Data',
+                  style: style,
+                ),
+              )
+            ],
+          ),
+          const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+          Row(
+            children: [
+              Expanded(
+                child: AssetDetailContainer(
+                  title: 'Supplier',
+                  value: asset.supplier?.name ?? 'No Data',
+                  style: style,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
